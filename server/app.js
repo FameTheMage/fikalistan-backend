@@ -1,4 +1,5 @@
 import express from 'express';
+import { fikaRoutes } from './routes/fika.js';
 
 // Bygger Express-appen utan att starta något. `db` är databaslagret
 // (riktiga Supabase eller minnesversionen i tester).
@@ -11,6 +12,8 @@ export function createApp({ db } = {}) {
   app.get('/api/halsa', (_req, res) => {
     res.json({ status: 'ok' });
   });
+
+  if (db) app.use('/api/fika', fikaRoutes(db));
 
   app.use('/api', (_req, res) => {
     res.status(404).json({ fel: 'Adressen finns inte.' });
