@@ -82,7 +82,7 @@ Varje steg görs i en egen session på en egen branch och blir en egen pull requ
 - [x] **Steg 0 – Planering och repo.** `PLAN.md`, `AGENTS.md`, `.gitignore`, Git-repo och publikt GitHub-repo `fikalistan-backend`.
   *Klart när:* repot finns på GitHub och innehåller planen.
 
-- [ ] **Steg 1 – Projektgrund och en server.** `package.json` (ESM, skript `dev`, `build`, `start`, `test`), Express som serverar ett minimalt React-gränssnitt via Vite i middleware-läge, `/api/halsa`, `.env.example`, `createApp({ db })`.
+- [x] **Steg 1 – Projektgrund och en server.** `package.json` (ESM, skript `dev`, `build`, `start`, `test`), Express som serverar ett minimalt React-gränssnitt via Vite i middleware-läge, `/api/halsa`, `.env.example`, `createApp({ db })`.
   *Klart när:* `npm run dev` visar en sida på http://localhost:3001 och `GET /api/halsa` svarar 200 från samma server.
 
 - [ ] **Steg 2 – Tester och CI.** `node --test` med första testet (`/api/halsa` och okänd `/api`-adress → 404 med svenskt fel), samt `.github/workflows/test.yml` som kör `npm ci` och `npm test` på varje pull request.
