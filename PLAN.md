@@ -94,7 +94,7 @@ Varje steg görs i en egen session på en egen branch och blir en egen pull requ
 - [x] **Steg 4 – API: lista och skapa.** `GET /api/fika` och `POST /api/fika` med validering och svenska 400-fel, `server/index.js` kopplar in riktiga databasen.
   *Klart när:* tester täcker lyckat flöde, sortering (nyast först), alla valideringsfel (400) och att `agar_hash` aldrig syns i svar. Allt är grönt.
 
-- [ ] **Steg 5 – API: ta bort.** `DELETE /api/fika/:id` med kontroll av ägarnyckel.
+- [x] **Steg 5 – API: ta bort.** `DELETE /api/fika/:id` med kontroll av ägarnyckel.
   *Klart när:* tester visar 204 med rätt nyckel, 403 med fel nyckel, 400 utan nyckel eller med ogiltigt id, 404 för okänt id, och att inlägget finns kvar efter ett nekat försök.
 
 - [ ] **Steg 6 – Frontend: lista och formulär.** React-sidor som hämtar listan, formulär för namn, vad och kommentar, felmeddelanden från API:et visas, nyckeln sparas i `localStorage`, "Ta bort" visas bara på egna inlägg. Namnet kommer ihåg i webbläsaren.

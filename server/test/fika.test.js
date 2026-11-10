@@ -92,3 +92,34 @@ test('kropp som inte är ett objekt ger 400', async () => {
   const svar = await post([1, 2]);
   assert.equal(svar.status, 400);
 });
+
+const ta = (id, nyckel) =>
+  fetch(`${bas}/api/fika/${id}`, { method: 'DELETE', headers: nyckel ? { 'X-Agar-Token': nyckel } : {} });
+const finns = async (id) => (await (await fetch(`${bas}/api/fika`)).json()).some((i) => i.id === id);
+
+test('DELETE med rätt nyckel: 204 och inlägget är borta', async () => {
+  const { id, agarNyckel } = await (await post({ namn: 'Cia', vad: 'Frukt' })).json();
+  const svar = await ta(id, agarNyckel);
+  assert.equal(svar.status, 204);
+  assert.equal(await finns(id), false);
+});
+
+test('DELETE med fel nyckel: 403 och inlägget finns kvar', async () => {
+  const { id } = await (await post({ namn: 'Dan', vad: 'Wienerbröd' })).json();
+  const svar = await ta(id, 'fel-nyckel');
+  assert.equal(svar.status, 403);
+  assert.ok((await svar.json()).fel);
+  assert.equal(await finns(id), true);
+});
+
+test('DELETE utan nyckel eller med ogiltigt id: 400', async () => {
+  const { id, agarNyckel } = await (await post({ namn: 'Eva', vad: 'Kex' })).json();
+  assert.equal((await ta(id)).status, 400);
+  assert.equal((await ta('inte-ett-uuid', agarNyckel)).status, 400);
+  assert.equal(await finns(id), true);
+});
+
+test('DELETE av okänt id: 404', async () => {
+  const svar = await ta('00000000-0000-4000-8000-000000000000', 'x');
+  assert.equal(svar.status, 404);
+});
