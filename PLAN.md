@@ -91,7 +91,7 @@ Varje steg görs i en egen session på en egen branch och blir en egen pull requ
 - [x] **Steg 3 – Databas.** Migration för `fikainlagg` med RLS i `supabase/migrations`, `supabase link` och `supabase db push`, samt `db/supabase.js` och `db/minne.js` med samma gränssnitt (`lista`, `skapa`, `hamta`, `ta bort`). Användaren klistrar själv in nyckeln i `.env`.
   *Klart när:* tabellen syns i Supabase med RLS påslaget, och ett test mot `db/minne.js` visar att lagret fungerar. Ett manuellt röktest mot Supabase går bra.
 
-- [ ] **Steg 4 – API: lista och skapa.** `GET /api/fika` och `POST /api/fika` med validering och svenska 400-fel, `server/index.js` kopplar in riktiga databasen.
+- [x] **Steg 4 – API: lista och skapa.** `GET /api/fika` och `POST /api/fika` med validering och svenska 400-fel, `server/index.js` kopplar in riktiga databasen.
   *Klart när:* tester täcker lyckat flöde, sortering (nyast först), alla valideringsfel (400) och att `agar_hash` aldrig syns i svar. Allt är grönt.
 
 - [ ] **Steg 5 – API: ta bort.** `DELETE /api/fika/:id` med kontroll av ägarnyckel.
