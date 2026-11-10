@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import { valideraInlagg } from '../validering.js';
 
 export const hashaNyckel = (nyckel) => createHash('sha256').update(nyckel).digest('hex');
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function fikaRoutes(db) {
   const router = Router();
@@ -26,6 +28,29 @@ export function fikaRoutes(db) {
       const agarNyckel = randomBytes(24).toString('hex');
       const inlagg = await db.skapa({ ...varden, agarHash: hashaNyckel(agarNyckel) });
       res.status(201).json({ ...inlagg, agarNyckel });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.delete('/:id', async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      if (!UUID.test(id)) return res.status(400).json({ fel: 'Ogiltigt id.' });
+      const nyckel = req.get('X-Agar-Token');
+      if (!nyckel) return res.status(400).json({ fel: 'Ägarnyckeln saknas.' });
+
+      const inlagg = await db.hamta(id);
+      if (!inlagg) return res.status(404).json({ fel: 'Inlägget finns inte.' });
+
+      const given = Buffer.from(hashaNyckel(nyckel), 'hex');
+      const riktig = Buffer.from(inlagg.agar_hash, 'hex');
+      if (given.length !== riktig.length || !timingSafeEqual(given, riktig)) {
+        return res.status(403).json({ fel: 'Fel ägarnyckel – du kan bara ta bort dina egna inlägg.' });
+      }
+
+      await db.taBort(id);
+      res.status(204).end();
     } catch (err) {
       next(err);
     }
