@@ -19,6 +19,12 @@ export function fikaRoutes(db) {
 
   router.post('/', async (req, res, next) => {
     try {
+      if (req.body === undefined) {
+        return res.status(400).json({ fel: 'Förfrågan måste skickas som JSON (Content-Type: application/json).' });
+      }
+      if (req.body === null || typeof req.body !== 'object' || Array.isArray(req.body)) {
+        return res.status(400).json({ fel: 'Förfrågan måste vara ett JSON-objekt.' });
+      }
       const { fel, varden } = valideraInlagg(req.body);
       if (fel) {
         return res
