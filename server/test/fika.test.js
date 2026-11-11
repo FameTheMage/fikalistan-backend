@@ -93,6 +93,80 @@ test('kropp som inte är ett objekt ger 400', async () => {
   assert.equal(svar.status, 400);
 });
 
+const rå = (kropp, rubriker = { 'Content-Type': 'application/json' }) =>
+  fetch(`${bas}/api/fika`, { method: 'POST', headers: rubriker, body: kropp });
+
+const otillatna = [
+  ['nolltecken i namn', { namn: 'A\u0000B', vad: 'Kaka' }, 'Namnet innehåller tecken som inte är tillåtna.'],
+  ['radbrytning i namn', { namn: 'A\nB', vad: 'Kaka' }, 'Namnet innehåller tecken som inte är tillåtna.'],
+  ['tabb i vad', { namn: 'Anna', vad: 'A\tB' }, 'Fältet "vad du tar med" innehåller tecken som inte är tillåtna.'],
+  ['ensam surrogat i namn', { namn: '\ud800', vad: 'Kaka' }, 'Namnet innehåller tecken som inte är tillåtna.'],
+  ['styrtecken i kommentar', { namn: 'Anna', vad: 'Kaka', kommentar: 'a\u0007b' }, 'Kommentaren innehåller tecken som inte är tillåtna.'],
+  ['osynligt namn (zero-width space)', { namn: '​', vad: 'Kaka' }, 'Namnet får inte vara tomt.'],
+  ['osynligt vad (ordlimmare + nbsp)', { namn: 'Anna', vad: '⁠ ﻿' }, 'Fältet "vad du tar med" får inte vara tomt.'],
+];
+
+for (const [namn, kropp, forvantat] of otillatna) {
+  test(`POST med ${namn} ger 400`, async () => {
+    const svar = await post(kropp);
+    assert.equal(svar.status, 400);
+    assert.equal((await svar.json()).fel, forvantat);
+  });
+}
+
+test('osynlig kommentar sparas som null', async () => {
+  const data = await (await post({ namn: 'Bo', vad: 'Kaka', kommentar: '​' })).json();
+  assert.equal(data.kommentar, null);
+});
+
+test('längden räknas i tecken: 50 emojis godtas, 51 nekas', async () => {
+  assert.equal((await post({ namn: '😀'.repeat(50), vad: 'Kaka' })).status, 201);
+  assert.equal((await post({ namn: '😀'.repeat(51), vad: 'Kaka' })).status, 400);
+});
+
+test('vanliga tecken (å, ä, ö, ZWJ-emoji) godtas', async () => {
+  const svar = await post({ namn: 'Åsa Öberg', vad: 'Kärleksmums 👩‍🍳' });
+  assert.equal(svar.status, 201);
+});
+
+const inteObjekt = [
+  ['JSON-sträng', '"hej"'],
+  ['JSON-null', 'null'],
+  ['JSON-tal', '5'],
+  ['JSON-lista', '[1,2]'],
+];
+
+for (const [namn, kropp] of inteObjekt) {
+  test(`${namn} som kropp ger tydligt fel om JSON-objekt`, async () => {
+    const svar = await rå(kropp);
+    assert.equal(svar.status, 400);
+    assert.equal((await svar.json()).fel, 'Förfrågan måste vara ett JSON-objekt.');
+  });
+}
+
+test('trasig JSON ger fortfarande "Ogiltig JSON"', async () => {
+  const svar = await rå('{trasig');
+  assert.equal(svar.status, 400);
+  assert.equal((await svar.json()).fel, 'Ogiltig JSON i förfrågan.');
+});
+
+for (const [namn, rubriker, kropp] of [
+  ['fel Content-Type', { 'Content-Type': 'text/plain' }, '{"namn":"A","vad":"B"}'],
+  ['ingen Content-Type', {}, '{"namn":"A","vad":"B"}'],
+]) {
+  test(`${namn} ger fel om att JSON krävs`, async () => {
+    const svar = await rå(kropp, rubriker);
+    assert.equal(svar.status, 400);
+    assert.equal((await svar.json()).fel, 'Förfrågan måste skickas som JSON (Content-Type: application/json).');
+  });
+}
+
+test('tom kropp med JSON-typ ger fältfel', async () => {
+  const svar = await rå('');
+  assert.equal(svar.status, 400);
+  assert.equal((await svar.json()).detaljer.length, 2);
+});
+
 const ta = (id, nyckel) =>
   fetch(`${bas}/api/fika/${id}`, { method: 'DELETE', headers: nyckel ? { 'X-Agar-Token': nyckel } : {} });
 const finns = async (id) => (await (await fetch(`${bas}/api/fika`)).json()).some((i) => i.id === id);

@@ -5,44 +5,46 @@ const GRANSER = {
   kommentar: { etikett: 'Kommentaren', max: 200 },
 };
 
+// Styrtecken (nolltecken, radbrytning, tabb m.fl.) tillåts inte. Postgres tar inte
+// emot \u0000 och radbrytningar förstör layouten.
+const STYRTECKEN = /\p{Cc}/u;
+// Blanksteg och osynliga formateringstecken (t.ex. zero-width space) räknas inte som innehåll.
+const OSYNLIGT = /[\p{White_Space}\p{Cf}]/gu;
+
+// Längd i tecken (kodpunkter), som i databasen – en emoji räknas som 1.
+const langd = (text) => [...text].length;
+
+// Kontrollerar ett textfält. Returnerar { fel } eller { text }; text är null för tomt valfritt fält.
+function kontrolleraText(falt, varde, { obligatoriskt }) {
+  const { etikett, max } = GRANSER[falt];
+  if (typeof varde !== 'string') return { fel: `${etikett} måste vara text.` };
+  if (!varde.isWellFormed() || STYRTECKEN.test(varde)) {
+    return { fel: `${etikett} innehåller tecken som inte är tillåtna.` };
+  }
+  if (varde.replace(OSYNLIGT, '') === '') {
+    return obligatoriskt ? { fel: `${etikett} får inte vara tomt.` } : { text: null };
+  }
+  const trimmat = varde.trim();
+  if (langd(trimmat) > max) return { fel: `${etikett} får vara högst ${max} tecken.` };
+  return { text: trimmat };
+}
+
 export function valideraInlagg(kropp) {
   const fel = [];
   const data = kropp && typeof kropp === 'object' && !Array.isArray(kropp) ? kropp : {};
 
-  const obligatoriskt = (falt) => {
-    const { etikett, max } = GRANSER[falt];
-    const varde = data[falt];
-    if (typeof varde !== 'string') {
-      fel.push(`${etikett} måste vara text.`);
-      return null;
-    }
-    const trimmat = varde.trim();
-    if (trimmat.length === 0) {
-      fel.push(`${etikett} får inte vara tomt.`);
-      return null;
-    }
-    if (trimmat.length > max) {
-      fel.push(`${etikett} får vara högst ${max} tecken.`);
-      return null;
-    }
-    return trimmat;
+  const kontroll = (falt, obligatoriskt) => {
+    const resultat = kontrolleraText(falt, data[falt], { obligatoriskt });
+    if (resultat.fel) fel.push(resultat.fel);
+    return resultat.text ?? null;
   };
 
-  const namn = obligatoriskt('namn');
-  const vad = obligatoriskt('vad');
+  const namn = kontroll('namn', true);
+  const vad = kontroll('vad', true);
 
   let kommentar = null;
   if (data.kommentar !== undefined && data.kommentar !== null) {
-    if (typeof data.kommentar !== 'string') {
-      fel.push(`${GRANSER.kommentar.etikett} måste vara text.`);
-    } else {
-      const trimmat = data.kommentar.trim();
-      if (trimmat.length > GRANSER.kommentar.max) {
-        fel.push(`${GRANSER.kommentar.etikett} får vara högst ${GRANSER.kommentar.max} tecken.`);
-      } else {
-        kommentar = trimmat === '' ? null : trimmat;
-      }
-    }
+    kommentar = kontroll('kommentar', false);
   }
 
   if (fel.length > 0) return { fel };

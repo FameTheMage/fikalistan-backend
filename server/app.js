@@ -7,7 +7,7 @@ export function createApp({ db } = {}) {
   const app = express();
   app.locals.db = db;
 
-  app.use(express.json({ limit: '10kb' }));
+  app.use(express.json({ limit: '10kb', strict: false }));
 
   app.get('/api/halsa', (_req, res) => {
     res.json({ status: 'ok' });
