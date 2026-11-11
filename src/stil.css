@@ -1,0 +1,202 @@
+:root {
+  --kram: #fff6e5;
+  --kort: #ffffff;
+  --orange: #e8590c;
+  --orange-mork: #c2410c;
+  --brun: #4a2c1a;
+  --brun-ljus: #7a5a45;
+  --kant: #f2d9b8;
+  --fel-bg: #ffe3e0;
+  --fel-text: #8a1c12;
+  --radie: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--kram);
+  color: var(--brun);
+  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+main {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+
+h1 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 2rem;
+  line-height: 1.2;
+  color: var(--orange-mork);
+}
+
+.under {
+  margin: 0 0 1.25rem;
+  color: var(--brun-ljus);
+}
+
+h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.2rem;
+}
+
+form,
+.inlagg {
+  background: var(--kort);
+  border: 1px solid var(--kant);
+  border-radius: var(--radie);
+  box-shadow: 0 2px 6px rgb(74 44 26 / 8%);
+}
+
+form {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.65rem 0.75rem;
+  font: inherit;
+  color: inherit;
+  background: var(--kram);
+  border: 2px solid var(--kant);
+  border-radius: 10px;
+}
+
+button {
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 999px;
+  border: 2px solid var(--orange);
+  min-height: 44px;
+  padding: 0.5rem 1.25rem;
+}
+
+button[type='submit'] {
+  width: 100%;
+  background: var(--orange);
+  color: #fff;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+:focus-visible {
+  outline: 3px solid var(--brun);
+  outline-offset: 2px;
+}
+
+.fel {
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 0.9rem;
+  list-style: none;
+  background: var(--fel-bg);
+  color: var(--fel-text);
+  border-radius: 10px;
+}
+
+.fel li + li {
+  margin-top: 0.25rem;
+}
+
+.listfel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--fel-bg);
+  color: var(--fel-text);
+  border-radius: var(--radie);
+}
+
+.listfel p {
+  flex: 1 1 12rem;
+  margin: 0;
+}
+
+.listfel button {
+  background: #fff;
+  color: var(--fel-text);
+  border-color: var(--fel-text);
+}
+
+.status,
+.tomt {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: var(--brun-ljus);
+}
+
+.tomt {
+  background: var(--kort);
+  border: 2px dashed var(--kant);
+  border-radius: var(--radie);
+  font-size: 1.15rem;
+}
+
+.lista {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.inlagg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.85rem 1rem;
+}
+
+.inlagg-text {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.vad {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.kommentar {
+  color: var(--brun-ljus);
+  font-style: italic;
+}
+
+.vem {
+  font-size: 0.9rem;
+  color: var(--brun-ljus);
+}
+
+.ta-bort {
+  background: #fff;
+  color: var(--orange-mork);
+}
+
+.ta-bort:hover {
+  background: var(--fel-bg);
+}

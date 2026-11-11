@@ -65,23 +65,42 @@ export default function App() {
 
   return (
     <main>
-      <h1>Fikalistan</h1>
+      <h1>Fikalistan ☕</h1>
+      <p className="under">Skriv upp vad du tar med till fikat – så ser alla vad som redan är på gång.</p>
 
       <form onSubmit={skicka}>
+        <h2>Jag tar med…</h2>
         <label>
           Ditt namn
-          <input value={namn} onChange={(e) => setNamn(e.target.value)} maxLength={50} />
+          <input
+            value={namn}
+            onChange={(e) => setNamn(e.target.value)}
+            maxLength={50}
+            required
+            autoComplete="name"
+          />
         </label>
         <label>
           Vad tar du med?
-          <input value={vad} onChange={(e) => setVad(e.target.value)} maxLength={100} />
+          <input
+            value={vad}
+            onChange={(e) => setVad(e.target.value)}
+            maxLength={100}
+            required
+            placeholder="t.ex. kanelbullar"
+          />
         </label>
         <label>
           Kommentar (valfritt)
-          <input value={kommentar} onChange={(e) => setKommentar(e.target.value)} maxLength={200} />
+          <input
+            value={kommentar}
+            onChange={(e) => setKommentar(e.target.value)}
+            maxLength={200}
+            placeholder="t.ex. räcker till 6 personer"
+          />
         </label>
         {formFel.length > 0 && (
-          <ul role="alert">
+          <ul className="fel" role="alert">
             {formFel.map((f) => (
               <li key={f}>{f}</li>
             ))}
@@ -92,17 +111,39 @@ export default function App() {
         </button>
       </form>
 
-      {listFel && <p role="alert">{listFel}</p>}
+      <h2>På fikabordet</h2>
+      {listFel && (
+        <div className="listfel" role="alert">
+          <p>{listFel}</p>
+          <button type="button" onClick={ladda}>
+            Försök igen
+          </button>
+        </div>
+      )}
       {laddar ? (
-        <p>Hämtar listan…</p>
+        <p className="status" role="status">
+          Hämtar listan…
+        </p>
+      ) : lista.length === 0 && !listFel ? (
+        <p className="tomt">Ingen har anmält något än – bli först!</p>
       ) : (
-        <ul>
+        <ul className="lista" aria-live="polite">
           {lista.map((i) => (
-            <li key={i.id}>
-              <strong>{i.namn}</strong> tar med {i.vad}
-              {i.kommentar ? ` (${i.kommentar})` : ''} <small>{formateraTid(i.skapad)}</small>
+            <li className="inlagg" key={i.id}>
+              <div className="inlagg-text">
+                <div className="vad">{i.vad}</div>
+                {i.kommentar && <div className="kommentar">{i.kommentar}</div>}
+                <div className="vem">
+                  {i.namn} · <time dateTime={i.skapad}>{formateraTid(i.skapad)}</time>
+                </div>
+              </div>
               {nycklar[i.id] && (
-                <button type="button" onClick={() => taBort(i.id)}>
+                <button
+                  type="button"
+                  className="ta-bort"
+                  aria-label={`Ta bort ${i.namn}s inlägg: ${i.vad}`}
+                  onClick={() => taBort(i.id)}
+                >
                   Ta bort
                 </button>
               )}
