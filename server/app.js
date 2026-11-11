@@ -18,7 +18,7 @@ const CSP = [
 
 // Bygger Express-appen utan att starta något. `db` är databaslagret
 // (riktiga Supabase eller minnesversionen i tester).
-//   begransning – { max, fonsterMs } slår på gräns för antal skrivande anrop per IP
+//   begransning – { max, fonsterMs } (eller en lista av sådana) slår på gräns för antal skrivande anrop per IP
 //   produktion  – skickar Content-Security-Policy
 //   montera     – (app) => void, lägger till rutter (t.ex. statiska filer) FÖRE felhanteraren
 export function createApp({ db, begransning, produktion = false, montera } = {}) {
@@ -36,7 +36,14 @@ export function createApp({ db, begransning, produktion = false, montera } = {})
     next();
   });
 
-  if (begransning) app.use('/api', skapaBegransare(begransning));
+  // Svaren kan innehålla ägarnyckeln och ska aldrig cachas.
+  app.use('/api', (_req, res, next) => {
+    res.set('Cache-Control', 'no-store');
+    next();
+  });
+
+  // Ett objekt eller en lista med flera gränser (t.ex. per minut och per timme).
+  for (const gräns of [begransning].flat().filter(Boolean)) app.use('/api', skapaBegransare(gräns));
 
   app.use(express.json({ limit: '10kb', strict: false }));
 
@@ -57,7 +64,10 @@ export function createApp({ db, begransning, produktion = false, montera } = {})
     const iApi = req.path === '/api' || req.path.startsWith('/api/');
     let status = 500;
     let meddelande = 'Något gick fel på servern.';
-    if (err.type === 'entity.parse.failed') {
+    if (err instanceof URIError) {
+      status = 400;
+      meddelande = 'Ogiltig adress.';
+    } else if (err.type === 'entity.parse.failed') {
       status = 400;
       meddelande = 'Ogiltig JSON i förfrågan.';
     } else if (err.type === 'entity.too.large') {

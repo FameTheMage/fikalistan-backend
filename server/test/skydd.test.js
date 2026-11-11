@@ -121,3 +121,47 @@ test('fel i monterade rutter utanför /api ger svensk text, inte Expresss HTML',
     server.close();
   }
 });
+
+// --- Granskning 2 ---
+
+test('trasig %-kodning i adressen ger 400, inte 500', async () => {
+  const { server, bas } = await starta({
+    montera: (app) => app.get('/{*splat}', (_req, res) => res.send('sida')),
+  });
+  try {
+    const svar = await fetch(`${bas}/api/fika/%E0%A4%A`, { method: 'DELETE', headers: { 'X-Agar-Token': 'x' } });
+    assert.equal(svar.status, 400);
+    assert.equal((await svar.json()).fel, 'Ogiltig adress.');
+    const sida = await fetch(`${bas}/%E0%A4%A`);
+    assert.equal(sida.status, 400);
+    assert.equal(await sida.text(), 'Ogiltig adress.');
+  } finally {
+    server.close();
+  }
+});
+
+test('API-svar har Cache-Control: no-store (även POST med ägarnyckel)', async () => {
+  const { server, bas } = await starta();
+  try {
+    assert.equal((await fetch(`${bas}/api/fika`)).headers.get('cache-control'), 'no-store');
+    assert.equal((await post(bas)).headers.get('cache-control'), 'no-store');
+    assert.equal((await fetch(`${bas}/api/finns-inte`)).headers.get('cache-control'), 'no-store');
+  } finally {
+    server.close();
+  }
+});
+
+test('timgräns: för många POST under en timme ger 429 även om minutgränsen inte nåtts', async () => {
+  const { server, bas } = await starta({
+    begransning: [
+      { max: 100, fonsterMs: 60_000 },
+      { max: 4, fonsterMs: 3_600_000 },
+    ],
+  });
+  try {
+    for (let i = 0; i < 4; i++) assert.equal((await post(bas)).status, 201);
+    assert.equal((await post(bas)).status, 429);
+  } finally {
+    server.close();
+  }
+});
