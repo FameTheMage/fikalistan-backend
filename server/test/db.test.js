@@ -38,3 +38,9 @@ test('taBort tar bort inlägget och ger false för okänt id', async () => {
   assert.deepEqual(await db.lista(), []);
   assert.equal(await db.taBort(nytt.id), false);
 });
+
+test('lista(gräns) ger bara de nyaste inläggen', async () => {
+  const db = skapaMinnesDb();
+  for (const namn of ['Anna', 'Bo', 'Cia']) await db.skapa(inlagg(namn));
+  assert.deepEqual((await db.lista(2)).map((r) => r.namn), ['Cia', 'Bo']);
+});

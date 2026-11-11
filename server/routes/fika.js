@@ -4,6 +4,9 @@ import { valideraInlagg } from '../validering.js';
 
 export const hashaNyckel = (nyckel) => createHash('sha256').update(nyckel).digest('hex');
 
+// Listan visar de nyaste inläggen; äldre döljs så svaret inte växer obegränsat.
+export const MAX_LISTA = 200;
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function fikaRoutes(db) {
@@ -11,7 +14,7 @@ export function fikaRoutes(db) {
 
   router.get('/', async (_req, res, next) => {
     try {
-      res.json(await db.lista());
+      res.json(await db.lista(MAX_LISTA));
     } catch (err) {
       next(err);
     }

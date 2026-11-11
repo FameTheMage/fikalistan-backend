@@ -73,6 +73,8 @@ Alla svar är JSON (utom `204`). Fel ser ut så här: `{ "fel": "Namnet får int
 | DELETE | `/api/fika/:id` | Tar bort ett inlägg. Kräver headern `X-Agar-Token` | 204, 400 (id är inget giltigt uuid, eller headern saknas), 403 (fel nyckel), 404 (finns inte), 500 |
 | * | `/api/*` (övrigt) | Okänd adress under `/api` | 404 |
 
+Skydd: `GET /api/fika` returnerar högst de 200 nyaste inläggen. Skrivande anrop (`POST`/`DELETE`) begränsas till 20 per minut och IP-adress, därefter `429` med svenskt fel och `Retry-After`. Alla svar har säkerhetshuvuden (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, och `Content-Security-Policy` i produktion) och avslöjar inte Express. I utveckling lyssnar servern bara på `127.0.0.1` (styrs av `HOST`).
+
 Regler för `400` på `POST`: `namn` och `vad` måste vara text, får inte vara tomma eller bara blanksteg, och får inte överstiga maxlängden. `kommentar` är valfri men måste vara text och högst 200 tecken. Text får inte innehålla styrtecken (nolltecken, radbrytning, tabb) eller ogiltiga Unicode-tecken, och osynliga tecken (t.ex. zero-width space) räknas som tomt. Längden räknas i tecken, så en emoji är 1. Kroppen måste vara ett JSON-objekt skickat som `application/json`. Okända fält ignoreras. Ogiltig JSON ger också 400 med svenskt meddelande. Förfrågningskroppen begränsas i storlek.
 
 ## Steg

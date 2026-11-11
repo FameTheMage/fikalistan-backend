@@ -17,11 +17,12 @@ export function skapaSupabaseDb({ url, hemligNyckel }) {
   });
 
   return {
-    async lista() {
+    async lista(gräns = 1000) {
       const { data, error } = await supabase
         .from(TABELL)
         .select(FALT_UTAN_HASH)
-        .order('skapad', { ascending: false });
+        .order('skapad', { ascending: false })
+        .limit(gräns);
       kasta(error);
       return data;
     },

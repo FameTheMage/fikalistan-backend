@@ -9,8 +9,8 @@ export function skapaMinnesDb() {
 
   return {
     // Nyaste först, utan agar_hash.
-    async lista() {
-      return [...rader].reverse().map(utanHash);
+    async lista(gräns = Infinity) {
+      return [...rader].reverse().slice(0, gräns).map(utanHash);
     },
 
     // Returnerar det skapade inlägget utan agar_hash.
