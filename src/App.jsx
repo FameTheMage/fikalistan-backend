@@ -96,7 +96,6 @@ export default function App() {
           <input
             value={namn}
             onChange={(e) => setNamn(e.target.value)}
-            maxLength={50}
             required
             autoComplete="name"
           />
@@ -106,7 +105,6 @@ export default function App() {
           <input
             value={vad}
             onChange={(e) => setVad(e.target.value)}
-            maxLength={100}
             required
             placeholder="t.ex. kanelbullar"
           />
@@ -116,7 +114,6 @@ export default function App() {
           <input
             value={kommentar}
             onChange={(e) => setKommentar(e.target.value)}
-            maxLength={200}
             placeholder="t.ex. räcker till 6 personer"
           />
         </label>
