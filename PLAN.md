@@ -24,7 +24,7 @@ En webbapp där alla på jobbet ser samma lista över vad som tas med till fikat
 | Miljövariabler | `.env` (aldrig i Git): `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, valfritt `PORT` (standard 3001). `.env.example` checkas in utan värden |
 | Tester | `node --test`, databasen ersätts av en minnesbaserad låtsasversion. Inga nycklar och inget nätverk behövs |
 | CI | GitHub Actions kör testerna på varje pull request |
-| Språk och design | Svenska i hela gränssnittet och i alla felmeddelanden. Mobilanpassat, glad design med varma färger |
+| Språk och design | Svenska i hela gränssnittet och i alla felmeddelanden. Mobilanpassat, **modern och futuristisk mörk design** (rymdnavy, cyan och bärnstensfärgade accenter, glöd, glaspaneler, Space Grotesk). Tas fram med skillsen Frontend Design och UI/UX Pro Max |
 
 ### Mappstruktur (mål)
 
@@ -100,7 +100,7 @@ Varje steg görs i en egen session på en egen branch och blir en egen pull requ
 - [x] **Steg 6 – Frontend: lista och formulär.** React-sidor som hämtar listan, formulär för namn, vad och kommentar, felmeddelanden från API:et visas, nyckeln sparas i `localStorage`, "Ta bort" visas bara på egna inlägg. Namnet kommer ihåg i webbläsaren.
   *Klart när:* man kan lägga till och ta bort ett eget inlägg i webbläsaren mot den riktiga backenden, ett inlägg från en annan webbläsare syns men saknar "Ta bort", och listan finns kvar efter omstart av servern.
 
-- [x] **Steg 7 – Design och mobil.** Glad design med varma färger, tydlig typografi, fungerande vid ca 375 px bredd, tomt läge ("Ingen har anmält något än – bli först!"), laddnings- och felstatus, tillgängliga etiketter och fokus.
+- [x] **Steg 7 – Design och mobil.** Modern och futuristisk mörk design (ändrad från "glad design med varma färger"; gjord med skillsen Frontend Design och UI/UX Pro Max), tydlig typografi, fungerande vid ca 375 px bredd, tomt läge ("Ingen har anmält något än – bli först!"), laddnings- och felstatus, tillgängliga etiketter och fokus.
   *Klart när:* sidan är genomgången i mobilbredd och datorbredd utan sidled-scroll, och all text i gränssnittet är på svenska.
 
 - [ ] **Steg 8 – Produktionsbygge och avslut.** `npm run build` + `npm start` skickar ut färdiga filer från samma Express-server, kort `README.md` (hur man startar, `.env`, `supabase db push`, tester).

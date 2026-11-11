@@ -65,7 +65,14 @@ export default function App() {
 
   return (
     <main>
-      <h1>Fikalistan ☕</h1>
+      <div className="rubrik">
+        <svg className="kopp" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M8 18h24v10a10 10 0 0 1-10 10h-4A10 10 0 0 1 8 28V18z" />
+          <path d="M32 21h3a5 5 0 0 1 0 10h-3" />
+          <path d="M15 5c-2 2 2 4 0 7M21 5c-2 2 2 4 0 7M27 5c-2 2 2 4 0 7" />
+        </svg>
+        <h1>Fikalistan</h1>
+      </div>
       <p className="under">Skriv upp vad du tar med till fikat – så ser alla vad som redan är på gång.</p>
 
       <form onSubmit={skicka}>
