@@ -7,6 +7,9 @@ import { skapaSupabaseDb } from './db/supabase.js';
 const rot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const produktion = process.argv.includes('--prod') || process.env.NODE_ENV === 'production';
 const port = Number(process.env.PORT) || 3001;
+// Utveckling lyssnar bara på den egna datorn (Vite visar annars källkoden för hela nätverket).
+// Produktion lyssnar på alla nätverkskort om inte HOST sätts.
+const host = process.env.HOST || (produktion ? undefined : '127.0.0.1');
 
 let db;
 try {
@@ -18,12 +21,14 @@ try {
   console.error(err.message);
   process.exit(1);
 }
-const app = createApp({ db });
 
+let montera;
 if (produktion) {
   const dist = path.join(rot, 'dist');
-  app.use(express.static(dist));
-  app.get('/{*splat}', (_req, res) => res.sendFile(path.join(dist, 'index.html')));
+  montera = (app) => {
+    app.use(express.static(dist));
+    app.get('/{*splat}', (_req, res) => res.sendFile(path.join(dist, 'index.html')));
+  };
 } else {
   const { createServer } = await import('vite');
   const vite = await createServer({
@@ -31,9 +36,14 @@ if (produktion) {
     server: { middlewareMode: true },
     appType: 'spa',
   });
-  app.use(vite.middlewares);
+  montera = (app) => app.use(vite.middlewares);
 }
 
-app.listen(port, () => {
-  console.log(`Fikalistan körs på http://localhost:${port}`);
+// Max 20 skrivande anrop (POST/DELETE) per minut och IP-adress.
+// Står servern bakom en proxy: sätt TRUST_PROXY=1 så att rätt IP-adress används.
+const app = createApp({ db, produktion, montera, begransning: { max: 20, fonsterMs: 60_000 } });
+if (process.env.TRUST_PROXY) app.set('trust proxy', Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY);
+
+app.listen(port, host, () => {
+  console.log(`Fikalistan körs på http://${host ?? 'localhost'}:${port}`);
 });
