@@ -105,5 +105,5 @@ Varje steg görs i en egen session på en egen branch och blir en egen pull requ
 - [x] **Steg 7 – Design och mobil.** Modern och futuristisk mörk design (ändrad från "glad design med varma färger"; gjord med skillsen Frontend Design och UI/UX Pro Max), tydlig typografi, fungerande vid ca 375 px bredd, tomt läge ("Ingen har anmält något än – bli först!"), laddnings- och felstatus, tillgängliga etiketter och fokus.
   *Klart när:* sidan är genomgången i mobilbredd och datorbredd utan sidled-scroll, och all text i gränssnittet är på svenska.
 
-- [ ] **Steg 8 – Produktionsbygge och avslut.** `npm run build` + `npm start` skickar ut färdiga filer från samma Express-server, kort `README.md` (hur man startar, `.env`, `supabase db push`, tester).
+- [x] **Steg 8 – Produktionsbygge och avslut.** `npm run build` + `npm start` skickar ut färdiga filer från samma Express-server, kort `README.md` (hur man startar, `.env`, `supabase db push`, tester).
   *Klart när:* `npm run build && npm start` visar hela appen på http://localhost:3001 utan Vite-servern, och testerna är gröna.
