@@ -10,6 +10,12 @@ Gemensam fikalista för jobbet. Se `PLAN.md` för mål, API, databas och steg.
 - **Bocka av steget** i `PLAN.md` (`- [x]`) i samma pull request, när steget är klart enligt dess "Klart när"-rad.
 - **Håll dig till planen.** Behöver något ändras i planen: ändra `PLAN.md` i samma pull request och säg det i beskrivningen.
 
+## Design
+
+- **Stil:** modern och futuristisk, mörkt tema (rymdnavy bas, cyan för gränssnitt, bärnsten för det som tas med, glöd och glaspaneler, Space Grotesk). Färger och mått ligger som CSS-variabler i `src/stil.css`.
+- **Skills:** allt designarbete (nytt eller ändrat gränssnitt) görs med skillsen `frontend-design` och `ui-ux-pro-max`.
+- **Kvalitetskrav:** kontrast minst 4,5:1, tryckytor minst 44 px, synlig tangentbordsfokus, SVG-ikoner (inga emojis som ikoner), `prefers-reduced-motion` respekteras, ingen sidled-scroll vid 375 px.
+
 ## Arkitektur
 
 - En enda Express-server på http://localhost:3001 skickar både sidorna och API:et (`/api`). `npm run dev` startar allt. Under utveckling körs Vite i middleware-läge, vid bygge skickar Express ut `dist/`.

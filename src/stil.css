@@ -1,14 +1,16 @@
 :root {
-  --kram: #fff6e5;
-  --kort: #ffffff;
-  --orange: #e8590c;
-  --orange-mork: #c2410c;
-  --brun: #4a2c1a;
-  --brun-ljus: #7a5a45;
-  --kant: #f2d9b8;
-  --fel-bg: #ffe3e0;
-  --fel-text: #8a1c12;
-  --radie: 14px;
+  --bas: #070b1a;
+  --panel: #111936;
+  --panel-hog: #18224a;
+  --kant: #2a3770;
+  --text: #e6ebff;
+  --dam: #a3acd1;
+  --cyan: #3de0ff;
+  --barnsten: #ffb347;
+  --fel-bg: #3a1226;
+  --fel-text: #ffb3c7;
+  --radie: 16px;
+  --font: 'Space Grotesk', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
 }
 
 * {
@@ -17,82 +19,131 @@
 
 body {
   margin: 0;
-  background: var(--kram);
-  color: var(--brun);
-  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: var(--font);
   font-size: 1.0625rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
+  background-color: var(--bas);
+  background-image:
+    radial-gradient(60rem 30rem at 50% -10rem, rgb(61 224 255 / 14%), transparent 70%),
+    linear-gradient(rgb(61 224 255 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(61 224 255 / 4%) 1px, transparent 1px);
+  background-size: auto, 40px 40px, 40px 40px;
+  background-attachment: fixed;
 }
 
 main {
   max-width: 40rem;
   margin: 0 auto;
-  padding: 1.25rem 1rem 3rem;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.rubrik {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0.5rem 0 0.5rem;
+}
+
+.kopp {
+  flex: none;
+  width: 3.25rem;
+  height: 3.25rem;
+  color: var(--barnsten);
+  filter: drop-shadow(0 0 10px rgb(255 179 71 / 55%));
 }
 
 h1 {
-  margin: 0.5rem 0 0.25rem;
-  font-size: 2rem;
-  line-height: 1.2;
-  color: var(--orange-mork);
+  margin: 0;
+  font-size: clamp(2rem, 9vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-shadow: 0 0 24px rgb(61 224 255 / 45%);
 }
 
 .under {
-  margin: 0 0 1.25rem;
-  color: var(--brun-ljus);
+  margin: 0 0 1.5rem;
+  max-width: 34rem;
+  color: var(--dam);
 }
 
 h2 {
   margin: 0 0 0.75rem;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--cyan);
 }
 
 form,
 .inlagg {
-  background: var(--kort);
+  background: linear-gradient(160deg, var(--panel-hog), var(--panel));
   border: 1px solid var(--kant);
   border-radius: var(--radie);
-  box-shadow: 0 2px 6px rgb(74 44 26 / 8%);
+  box-shadow: 0 8px 30px rgb(0 0 0 / 35%);
 }
 
 form {
-  padding: 1rem;
-  margin-bottom: 1.5rem;
+  padding: 1.1rem;
+  margin-bottom: 2rem;
 }
 
 label {
   display: block;
-  margin-bottom: 0.75rem;
-  font-weight: 600;
+  margin-bottom: 0.85rem;
+  font-weight: 500;
 }
 
 input {
   display: block;
   width: 100%;
-  margin-top: 0.25rem;
-  padding: 0.65rem 0.75rem;
+  min-height: 44px;
+  margin-top: 0.3rem;
+  padding: 0.6rem 0.8rem;
   font: inherit;
-  color: inherit;
-  background: var(--kram);
-  border: 2px solid var(--kant);
+  color: var(--text);
+  background: var(--bas);
+  border: 1px solid var(--kant);
   border-radius: 10px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input::placeholder {
+  color: #7f89b3;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgb(61 224 255 / 30%);
 }
 
 button {
   font: inherit;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 999px;
-  border: 2px solid var(--orange);
   min-height: 44px;
   padding: 0.5rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--cyan);
+  transition: box-shadow 0.15s, background-color 0.15s, transform 0.1s;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 button[type='submit'] {
   width: 100%;
-  background: var(--orange);
-  color: #fff;
+  color: var(--bas);
+  background: var(--cyan);
+  box-shadow: 0 0 18px rgb(61 224 255 / 40%);
+}
+
+button[type='submit']:hover:not(:disabled) {
+  box-shadow: 0 0 28px rgb(61 224 255 / 70%);
 }
 
 button:disabled {
@@ -101,16 +152,17 @@ button:disabled {
 }
 
 :focus-visible {
-  outline: 3px solid var(--brun);
+  outline: 3px solid var(--barnsten);
   outline-offset: 2px;
 }
 
 .fel {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.85rem;
   padding: 0.6rem 0.9rem;
   list-style: none;
-  background: var(--fel-bg);
   color: var(--fel-text);
+  background: var(--fel-bg);
+  border: 1px solid #7a2a4a;
   border-radius: 10px;
 }
 
@@ -125,8 +177,9 @@ button:disabled {
   gap: 0.5rem 1rem;
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;
-  background: var(--fel-bg);
   color: var(--fel-text);
+  background: var(--fel-bg);
+  border: 1px solid #7a2a4a;
   border-radius: var(--radie);
 }
 
@@ -136,21 +189,21 @@ button:disabled {
 }
 
 .listfel button {
-  background: #fff;
   color: var(--fel-text);
+  background: transparent;
   border-color: var(--fel-text);
 }
 
 .status,
 .tomt {
-  padding: 1.5rem 1rem;
+  padding: 1.75rem 1rem;
   text-align: center;
-  color: var(--brun-ljus);
+  color: var(--dam);
 }
 
 .tomt {
-  background: var(--kort);
-  border: 2px dashed var(--kant);
+  background: var(--panel);
+  border: 1px dashed var(--kant);
   border-radius: var(--radie);
   font-size: 1.15rem;
 }
@@ -169,7 +222,8 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem 1rem;
-  padding: 0.85rem 1rem;
+  padding: 0.9rem 1rem 0.9rem 1.15rem;
+  border-left: 3px solid var(--barnsten);
 }
 
 .inlagg-text {
@@ -178,25 +232,33 @@ button:disabled {
 }
 
 .vad {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 700;
+  color: var(--barnsten);
 }
 
 .kommentar {
-  color: var(--brun-ljus);
-  font-style: italic;
+  color: var(--text);
 }
 
 .vem {
   font-size: 0.9rem;
-  color: var(--brun-ljus);
+  color: var(--dam);
 }
 
 .ta-bort {
-  background: #fff;
-  color: var(--orange-mork);
+  color: var(--fel-text);
+  background: transparent;
+  border-color: #7a2a4a;
 }
 
 .ta-bort:hover {
   background: var(--fel-bg);
+  box-shadow: 0 0 14px rgb(255 120 160 / 35%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }
