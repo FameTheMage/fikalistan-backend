@@ -97,7 +97,7 @@ Varje steg görs i en egen session på en egen branch och blir en egen pull requ
 - [x] **Steg 5 – API: ta bort.** `DELETE /api/fika/:id` med kontroll av ägarnyckel.
   *Klart när:* tester visar 204 med rätt nyckel, 403 med fel nyckel, 400 utan nyckel eller med ogiltigt id, 404 för okänt id, och att inlägget finns kvar efter ett nekat försök.
 
-- [ ] **Steg 6 – Frontend: lista och formulär.** React-sidor som hämtar listan, formulär för namn, vad och kommentar, felmeddelanden från API:et visas, nyckeln sparas i `localStorage`, "Ta bort" visas bara på egna inlägg. Namnet kommer ihåg i webbläsaren.
+- [x] **Steg 6 – Frontend: lista och formulär.** React-sidor som hämtar listan, formulär för namn, vad och kommentar, felmeddelanden från API:et visas, nyckeln sparas i `localStorage`, "Ta bort" visas bara på egna inlägg. Namnet kommer ihåg i webbläsaren.
   *Klart när:* man kan lägga till och ta bort ett eget inlägg i webbläsaren mot den riktiga backenden, ett inlägg från en annan webbläsare syns men saknar "Ta bort", och listan finns kvar efter omstart av servern.
 
 - [ ] **Steg 7 – Design och mobil.** Glad design med varma färger, tydlig typografi, fungerande vid ca 375 px bredd, tomt läge ("Ingen har anmält något än – bli först!"), laddnings- och felstatus, tillgängliga etiketter och fokus.
