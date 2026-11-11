@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { createApp } from './app.js';
 import { skapaSupabaseDb } from './db/supabase.js';
+import { begransningsgranser, tillatnaVardnamn, tolkaTrustProxy } from './konfig.js';
 
 const rot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const produktion = process.argv.includes('--prod') || process.env.NODE_ENV === 'production';
@@ -12,11 +13,16 @@ const port = Number(process.env.PORT) || 3001;
 const host = process.env.HOST || (produktion ? undefined : '127.0.0.1');
 
 let db;
+let trustProxy;
+let begransning;
 try {
   db = skapaSupabaseDb({
     url: process.env.SUPABASE_URL,
     hemligNyckel: process.env.SUPABASE_SECRET_KEY,
   });
+  trustProxy = tolkaTrustProxy(process.env.TRUST_PROXY);
+  // Skrivande anrop (POST/DELETE) per IP-adress. Standard: 20 per minut och 300 per timme.
+  begransning = begransningsgranser(process.env);
 } catch (err) {
   console.error(err.message);
   process.exit(1);
@@ -39,15 +45,15 @@ if (produktion) {
   montera = (app) => app.use(vite.middlewares);
 }
 
-// Skrivande anrop (POST/DELETE) per IP-adress: max 20 per minut och 100 per timme.
-// MAX_SKRIV_PER_MINUT ändrar minutgränsen, t.ex. för ett kontor bakom en gemensam IP.
-const begransning = [
-  { max: Number(process.env.MAX_SKRIV_PER_MINUT) || 20, fonsterMs: 60_000 },
-  { max: 100, fonsterMs: 3_600_000 },
-];
-// Står servern bakom en proxy: sätt TRUST_PROXY=1 så att rätt IP-adress används.
-const app = createApp({ db, produktion, montera, begransning });
-if (process.env.TRUST_PROXY) app.set('trust proxy', Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY);
+// Vid proxy: TRUST_PROXY=1 så används rätt IP-adress för gränsen.
+const app = createApp({
+  db,
+  produktion,
+  montera,
+  begransning,
+  tillatnaVardar: produktion ? undefined : tillatnaVardnamn(process.env.HOST),
+});
+if (trustProxy !== undefined) app.set('trust proxy', trustProxy);
 
 app.listen(port, host, () => {
   console.log(`Fikalistan körs på http://${host ?? 'localhost'}:${port}`);

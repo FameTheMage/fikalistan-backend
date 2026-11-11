@@ -18,8 +18,9 @@ Kopiera `.env.example` till `.env` och fyll i värdena:
 | `SUPABASE_SECRET_KEY` | Projektets hemliga nyckel. Checka aldrig in `.env` |
 | `PORT` | Valfritt, standard 3001 |
 | `HOST` | Valfritt. Standard `127.0.0.1` i utveckling, alla nätverkskort i produktion |
-| `TRUST_PROXY` | Valfritt. Sätt till `1` bakom en proxy så att rätt IP-adress används |
+| `TRUST_PROXY` | Valfritt. Heltal, antalet proxyer framför servern. Sätt till `1` bakom en proxy så att rätt IP-adress används. Andra värden (t.ex. `true`) ger fel vid start |
 | `MAX_SKRIV_PER_MINUT` | Valfritt. Max skrivande anrop per minut och IP-adress (standard 20) |
+| `MAX_SKRIV_PER_TIMME` | Valfritt. Max skrivande anrop per timme och IP-adress (standard 300) |
 
 ## Utveckling
 

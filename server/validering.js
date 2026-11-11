@@ -17,6 +17,10 @@ const STYRTECKEN =
   /[\p{Cc}\p{Co}\u2028\u2029\u202A-\u202E\u2066-\u2069\u{E0000}-\u{E007F}\uFDD0-\uFDEF\uFFFE\uFFFF]|\p{M}{4}/u;
 // Blanksteg och osynliga formateringstecken (t.ex. zero-width space) räknas inte som innehåll.
 const OSYNLIGT = /[\p{White_Space}\p{Cf}]/gu;
+// Osynliga formateringstecken tas bort ur det sparade värdet, utom ZWJ som sammansatta emojis behöver.
+const OSYNLIG_FORMATERING = /(?!‍)\p{Cf}/gu;
+// ZWJ i början och slutet räknas inte heller som innehåll.
+const KANTER = /^[\s‍]+|[\s‍]+$/gu;
 
 // Längd i tecken (kodpunkter), som i databasen – en emoji räknas som 1.
 const langd = (text) => [...text].length;
@@ -28,10 +32,11 @@ function kontrolleraText(falt, varde, { obligatoriskt }) {
   if (!varde.isWellFormed() || STYRTECKEN.test(varde)) {
     return { fel: `${etikett} innehåller tecken som inte är tillåtna.` };
   }
-  if (varde.replace(OSYNLIGT, '') === '') {
+  const rensad = varde.replace(OSYNLIG_FORMATERING, '');
+  if (rensad.replace(OSYNLIGT, '') === '') {
     return obligatoriskt ? { fel: `${etikett} får inte vara tomt.` } : { text: null };
   }
-  const trimmat = varde.trim();
+  const trimmat = rensad.replace(KANTER, '');
   if (langd(trimmat) > max) return { fel: `${etikett} får vara högst ${max} tecken.` };
   return { text: trimmat };
 }

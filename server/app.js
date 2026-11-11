@@ -21,10 +21,23 @@ const CSP = [
 //   begransning – { max, fonsterMs } (eller en lista av sådana) slår på gräns för antal skrivande anrop per IP
 //   produktion  – skickar Content-Security-Policy
 //   montera     – (app) => void, lägger till rutter (t.ex. statiska filer) FÖRE felhanteraren
-export function createApp({ db, begransning, produktion = false, montera } = {}) {
+//   tillatnaVardar – lista med värdnamn som godtas i Host-huvudet (utveckling, mot DNS rebinding)
+export function createApp({ db, begransning, produktion = false, montera, tillatnaVardar } = {}) {
   const app = express();
   app.locals.db = db;
   app.disable('x-powered-by');
+
+  if (tillatnaVardar) {
+    const tillatna = new Set(tillatnaVardar.map((namn) => namn.toLowerCase()));
+    app.use((req, res, next) => {
+      // IPv6-adresser kan komma med hakparenteser, t.ex. [::1]
+      const vard = (req.hostname ?? '').replace(/^\[|\]$/g, '').toLowerCase();
+      if (tillatna.has(vard)) return next();
+      const meddelande = 'Okänt värdnamn i förfrågan.';
+      if (req.path === '/api' || req.path.startsWith('/api/')) return res.status(403).json({ fel: meddelande });
+      res.status(403).type('text/plain; charset=utf-8').send(meddelande);
+    });
+  }
 
   app.use((_req, res, next) => {
     res.set({
