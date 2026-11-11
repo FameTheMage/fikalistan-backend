@@ -100,7 +100,7 @@ Varje steg görs i en egen session på en egen branch och blir en egen pull requ
 - [x] **Steg 6 – Frontend: lista och formulär.** React-sidor som hämtar listan, formulär för namn, vad och kommentar, felmeddelanden från API:et visas, nyckeln sparas i `localStorage`, "Ta bort" visas bara på egna inlägg. Namnet kommer ihåg i webbläsaren.
   *Klart när:* man kan lägga till och ta bort ett eget inlägg i webbläsaren mot den riktiga backenden, ett inlägg från en annan webbläsare syns men saknar "Ta bort", och listan finns kvar efter omstart av servern.
 
-- [ ] **Steg 7 – Design och mobil.** Glad design med varma färger, tydlig typografi, fungerande vid ca 375 px bredd, tomt läge ("Ingen har anmält något än – bli först!"), laddnings- och felstatus, tillgängliga etiketter och fokus.
+- [x] **Steg 7 – Design och mobil.** Glad design med varma färger, tydlig typografi, fungerande vid ca 375 px bredd, tomt läge ("Ingen har anmält något än – bli först!"), laddnings- och felstatus, tillgängliga etiketter och fokus.
   *Klart när:* sidan är genomgången i mobilbredd och datorbredd utan sidled-scroll, och all text i gränssnittet är på svenska.
 
 - [ ] **Steg 8 – Produktionsbygge och avslut.** `npm run build` + `npm start` skickar ut färdiga filer från samma Express-server, kort `README.md` (hur man startar, `.env`, `supabase db push`, tester).
