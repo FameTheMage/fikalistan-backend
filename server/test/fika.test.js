@@ -197,3 +197,34 @@ test('DELETE av okänt id: 404', async () => {
   const svar = await ta('00000000-0000-4000-8000-000000000000', 'x');
   assert.equal(svar.status, 404);
 });
+
+const forbjudna = [
+  ['bidi-override (U+202E)', 'Anna‮admin'],
+  ['bidi-isolering (U+2066)', '⁦Anna'],
+  ['Unicode-tagg (U+E0041)', 'A\u{E0041}'],
+  ['privat användning (U+E000)', 'A'],
+  ['radavskiljare (U+2028)', 'A B'],
+  ['styckeavskiljare (U+2029)', 'A B'],
+  ['icke-tecken (U+FFFF)', 'A￿'],
+  ['staplade kombinationstecken (zalgo)', 'a' + '̀́̂̃'.repeat(3)],
+];
+
+for (const [namn, text] of forbjudna) {
+  test(`POST med ${namn} i namnet ger 400`, async () => {
+    const svar = await post({ namn: text, vad: 'Kaka' });
+    assert.equal(svar.status, 400);
+    assert.equal((await svar.json()).fel, 'Namnet innehåller tecken som inte är tillåtna.');
+  });
+}
+
+test('vanliga kombinationstecken (á, ñ, e + två accenter) och ZWJ godtas', async () => {
+  const svar = await post({ namn: 'áñé̂ 👨‍👩‍👧', vad: 'Kaka' });
+  assert.equal(svar.status, 201);
+});
+
+test('DELETE med versal-UUID hittar inlägget', async () => {
+  const { id, agarNyckel } = await (await post({ namn: 'Versal', vad: 'Kaka' })).json();
+  const svar = await ta(id.toUpperCase(), agarNyckel);
+  assert.equal(svar.status, 204);
+  assert.equal(await finns(id), false);
+});

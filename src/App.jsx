@@ -16,12 +16,13 @@ export default function App() {
   const [formFel, setFormFel] = useState([]);
   const [skickar, setSkickar] = useState(false);
 
-  const ladda = useCallback(async () => {
+  // tyst = bakgrundsuppdatering: ett misslyckande visas inte, nästa försök tar vid.
+  const ladda = useCallback(async ({ tyst = false } = {}) => {
     try {
       setLista(await hamtaLista());
       setListFel('');
     } catch (fel) {
-      setListFel(fel.message);
+      if (!tyst) setListFel(fel.message);
     } finally {
       setLaddar(false);
     }
@@ -29,6 +30,19 @@ export default function App() {
 
   useEffect(() => {
     ladda();
+  }, [ladda]);
+
+  // Håll listan färsk: kollegors inlägg syns utan att man laddar om sidan.
+  useEffect(() => {
+    const uppdatera = () => {
+      if (document.visibilityState === 'visible') ladda({ tyst: true });
+    };
+    const timer = setInterval(uppdatera, 30_000);
+    document.addEventListener('visibilitychange', uppdatera);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', uppdatera);
+    };
   }, [ladda]);
 
   async function skicka(e) {
@@ -122,7 +136,7 @@ export default function App() {
       {listFel && (
         <div className="listfel" role="alert">
           <p>{listFel}</p>
-          <button type="button" onClick={ladda}>
+          <button type="button" onClick={() => ladda()}>
             Försök igen
           </button>
         </div>

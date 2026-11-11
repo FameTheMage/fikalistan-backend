@@ -5,9 +5,16 @@ const GRANSER = {
   kommentar: { etikett: 'Kommentaren', max: 200 },
 };
 
-// Styrtecken (nolltecken, radbrytning, tabb m.fl.) tillåts inte. Postgres tar inte
-// emot \u0000 och radbrytningar förstör layouten.
-const STYRTECKEN = /\p{Cc}/u;
+// Följande tillåts inte:
+//  - styrtecken (nolltecken, radbrytning, tabb m.fl.): Postgres tar inte emot \u0000
+//    och radbrytningar förstör layouten
+//  - radavskiljare U+2028/2029
+//  - bidi-override och -isolering (U+202A–202E, U+2066–2069): kan vända text och utge sig för någon annan
+//  - Unicode-taggtecken (U+E0000–E007F), privat användning och icke-tecken: osynliga eller rutor
+//  - fler än 3 kombinationstecken i rad ("zalgo"): ger orimligt höga rader
+// ZWJ (U+200D) tillåts, den behövs för sammansatta emojis.
+const STYRTECKEN =
+  /[\p{Cc}\p{Co}\u2028\u2029\u202A-\u202E\u2066-\u2069\u{E0000}-\u{E007F}\uFDD0-\uFDEF\uFFFE\uFFFF]|\p{M}{4}/u;
 // Blanksteg och osynliga formateringstecken (t.ex. zero-width space) räknas inte som innehåll.
 const OSYNLIGT = /[\p{White_Space}\p{Cf}]/gu;
 

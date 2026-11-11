@@ -39,9 +39,14 @@ if (produktion) {
   montera = (app) => app.use(vite.middlewares);
 }
 
-// Max 20 skrivande anrop (POST/DELETE) per minut och IP-adress.
+// Skrivande anrop (POST/DELETE) per IP-adress: max 20 per minut och 100 per timme.
+// MAX_SKRIV_PER_MINUT ändrar minutgränsen, t.ex. för ett kontor bakom en gemensam IP.
+const begransning = [
+  { max: Number(process.env.MAX_SKRIV_PER_MINUT) || 20, fonsterMs: 60_000 },
+  { max: 100, fonsterMs: 3_600_000 },
+];
 // Står servern bakom en proxy: sätt TRUST_PROXY=1 så att rätt IP-adress används.
-const app = createApp({ db, produktion, montera, begransning: { max: 20, fonsterMs: 60_000 } });
+const app = createApp({ db, produktion, montera, begransning });
 if (process.env.TRUST_PROXY) app.set('trust proxy', Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY);
 
 app.listen(port, host, () => {

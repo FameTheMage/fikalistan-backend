@@ -44,8 +44,8 @@ export function fikaRoutes(db) {
 
   router.delete('/:id', async (req, res, next) => {
     try {
-      const { id } = req.params;
-      if (!UUID.test(id)) return res.status(400).json({ fel: 'Ogiltigt id.' });
+      if (!UUID.test(req.params.id)) return res.status(400).json({ fel: 'Ogiltigt id.' });
+      const id = req.params.id.toLowerCase(); // Postgres ger uuid i gemener
       const nyckel = req.get('X-Agar-Token');
       if (!nyckel) return res.status(400).json({ fel: 'Ägarnyckeln saknas.' });
 
